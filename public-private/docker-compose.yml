@@ -1,0 +1,36 @@
+version: "3.3"
+services:
+  
+  # alpha is visible to outside world
+  bot_alpha:
+    image: ubuntu:18.04
+    command: sh -c "apt-get update && apt-get -y install net-tools python3 && echo '<h2>hallo werld alpha</h2>' > index.html && python3 -m http.server 8000"
+    depends_on:
+    - bot_bravo
+    - bot_charlie
+    ports:
+    - target: 8000
+      published: 9000
+      protocol: tcp
+      mode: host
+
+  # bravo is not visible
+  bot_bravo:
+    image: ubuntu:18.04
+    command: sh -c "apt-get update && apt-get -y install net-tools python3 && echo '<h2>hallo werld bravo</h2>' > index.html && python3 -m http.server 8000"
+    networks:
+    - network29
+
+  # charlie is not visible
+  bot_charlie:
+    image: ubuntu:18.04
+    command: sh -c "apt-get update && apt-get -y install net-tools python3 && echo '<h2>hallo werld charlie</h2>' > index.html && python3 -m http.server 8000"
+    networks:
+    - network29
+
+networks:
+  network29:
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.29.238.0/16
